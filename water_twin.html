@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>التوأم المائي الرقمي</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial}
+body{
+margin:0;background:linear-gradient(135deg,#e8f8ff,#f5fdff);
+color:#123;
+}
+.container{max-width:950px;margin:25px auto;padding:20px}
+.header{
+background:linear-gradient(135deg,#0077b6,#00a6d6);
+color:white;padding:30px;border-radius:20px;
+text-align:center;box-shadow:0 8px 25px #0002
+}
+.header h1{margin:0 0 10px;font-size:32px}
+.header p{margin:6px;font-size:18px}
+.card{
+background:white;margin-top:20px;padding:25px;
+border-radius:18px;box-shadow:0 5px 20px #0001
+}
+h2{color:#006b9c}
+.scenarios{
+display:grid;grid-template-columns:repeat(4,1fr);
+gap:10px;margin-top:15px
+}
+.scenarios button{
+padding:13px 5px;border:0;border-radius:10px;
+color:white;font-weight:bold;cursor:pointer
+}
+.normal{background:#43a047}
+.limited{background:#f9a825}
+.continuous{background:#e53935}
+.sudden{background:#fb8c00}
+
+.inputs{
+display:grid;grid-template-columns:repeat(2,1fr);
+gap:18px;margin-top:20px
+}
+label{display:block;font-weight:bold;margin-bottom:7px}
+input{
+width:100%;padding:13px;border:2px solid #cde7f2;
+border-radius:10px;font-size:17px
+}
+.mainbtn{
+width:100%;margin-top:20px;padding:15px;border:0;
+border-radius:12px;background:#0077b6;color:white;
+font-size:19px;font-weight:bold;cursor:pointer
+}
+.result{display:none}
+.status{
+padding:18px;border-radius:12px;text-align:center;
+font-size:20px;font-weight:bold;margin-top:15px
+}
+.green{background:#dff7e7;color:#16733b}
+.yellow{background:#fff0d5;color:#a45a00}
+.red{background:#ffe0e0;color:#a40000}
+
+.numbers{
+display:grid;grid-template-columns:repeat(3,1fr);
+gap:15px;margin-top:20px
+}
+.number{
+background:#f1faff;padding:20px;text-align:center;
+border-radius:12px
+}
+.number strong{
+display:block;font-size:27px;color:#0077b6;margin-top:8px
+}
+.barrow{margin:18px 0}
+.barbg{
+height:30px;background:#e8f2f6;border-radius:15px;
+overflow:hidden
+}
+.bar{
+height:100%;border-radius:15px;
+transition:width 1s
+}
+.blue{background:#00a6d6}
+.redbar{background:#ef5350}
+
+.whatif{
+background:#eefaff;border-right:5px solid #0077b6;
+padding:20px;border-radius:10px;margin-top:20px
+}
+.footer{text-align:center;margin-top:20px;color:#567}
+
+@media(max-width:700px){
+.inputs,.numbers{grid-template-columns:1fr}
+.scenarios{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>💧 التوأم المائي الرقمي</h1>
+<p>نموذج ذكي مقترح للتنبؤ بهدر المياه</p>
+<p>ومحاكاة السيناريوهات المستقبلية</p>
+</div>
+
+<div class="card">
+<h2>🎯 اختر سيناريو المحاكاة</h2>
+
+<div class="scenarios">
+<button class="normal" onclick="scenario('normal')">🟢 طبيعي</button>
+<button class="limited" onclick="scenario('limited')">🟡 تسرب محدود</button>
+<button class="continuous" onclick="scenario('continuous')">🔴 تسرب مستمر</button>
+<button class="sudden" onclick="scenario('sudden')">🟠 ارتفاع مفاجئ</button>
+</div>
+
+<div class="inputs">
+
+<div>
+<label>الاستهلاك الطبيعي (لتر/ساعة)</label>
+<input id="normalValue" type="number" value="20">
+</div>
+
+<div>
+<label>الاستهلاك الفعلي (لتر/ساعة)</label>
+<input id="actualValue" type="number" value="25">
+</div>
+
+<div>
+<label>مدة الهدر يوميًا (ساعة)</label>
+<input id="hours" type="number" value="24">
+</div>
+
+<div>
+<label>عدد الأيام</label>
+<input id="days" type="number" value="7">
+</div>
+
+</div>
+
+<button class="mainbtn" onclick="simulate()">🔎 تشغيل المحاكاة</button>
+</div>
+
+
+<div class="card result" id="result">
+
+<h2>📊 نتائج التوأم المائي الرقمي</h2>
+
+<div id="status" class="status"></div>
+
+<div class="numbers">
+
+<div class="number">
+الانحراف
+<strong id="difference">0</strong>
+لتر/ساعة
+</div>
+
+<div class="number">
+الهدر اليومي
+<strong id="dailyWaste">0</strong>
+لتر
+</div>
+
+<div class="number">
+الهدر المتوقع
+<strong id="totalWaste">0</strong>
+لتر
+</div>
+
+</div>
+
+<h3>📈 مقارنة الاستهلاك</h3>
+
+<div class="barrow">
+<b>الاستهلاك الطبيعي</b>
+<div class="barbg">
+<div id="normalBar" class="bar blue"></div>
+</div>
+</div>
+
+<div class="barrow">
+<b>الاستهلاك الفعلي</b>
+<div class="barbg">
+<div id="actualBar" class="bar redbar"></div>
+</div>
+</div>
+
+<div class="whatif">
+<h3>🔮 ماذا لو استمر الهدر؟</h3>
+<p id="whatif"></p>
+</div>
+
+<div class="whatif">
+<h3>🤖 التحليل الذكي</h3>
+<p id="analysis"></p>
+</div>
+
+</div>
+
+<div class="footer">
+نموذج محاكاة بحثي — لا يعتمد على شبكة مياه حقيقية
+</div>
+
+</div>
+
+
+<script>
+
+function scenario(type){
+
+let normal=document.getElementById("normalValue");
+let actual=document.getElementById("actualValue");
+let hours=document.getElementById("hours");
+
+normal.value=20;
+
+if(type==="normal"){
+actual.value=20;
+hours.value=12;
+}
+
+if(type==="limited"){
+actual.value=22;
+hours.value=12;
+}
+
+if(type==="continuous"){
+actual.value=25;
+hours.value=24;
+}
+
+if(type==="sudden"){
+actual.value=35;
+hours.value=2;
+}
+
+simulate();
+}
+
+
+function simulate(){
+
+let normal=Number(document.getElementById("normalValue").value);
+let actual=Number(document.getElementById("actualValue").value);
+let hours=Number(document.getElementById("hours").value);
+let days=Number(document.getElementById("days").value);
+
+if(normal<=0 || actual<0 || hours<=0 || days<=0){
+alert("يرجى إدخال قيم صحيحة");
+return;
+}
+
+let difference=actual-normal;
+
+if(difference<0) difference=0;
+
+let dailyWaste=difference*hours;
+let totalWaste=dailyWaste*days;
+
+document.getElementById("difference").textContent=
+difference.toFixed(1);
+
+document.getElementById("dailyWaste").textContent=
+dailyWaste.toFixed(1);
+
+document.getElementById("totalWaste").textContent=
+totalWaste.toFixed(1);
+
+
+let status=document.getElementById("status");
+
+status.className="status";
+
+if(actual<=normal*1.05){
+
+status.classList.add("green");
+status.textContent="🟢 الاستهلاك قريب من النمط الطبيعي";
+
+}
+else if(actual<=normal*1.20){
+
+status.classList.add("yellow");
+status.textContent="🟡 يوجد انحراف يحتاج إلى المراقبة";
+
+}
+else{
+
+status.classList.add("red");
+status.textContent="🔴 تم اكتشاف استهلاك غير طبيعي";
+
+}
+
+
+let max=Math.max(normal,actual);
+
+document.getElementById("normalBar").style.width=
+(normal/max*100)+"%";
+
+document.getElementById("actualBar").style.width=
+(actual/max*100)+"%";
+
+
+document.getElementById("whatif").textContent=
+"إذا استمر هذا النمط لمدة "+days+
+" أيام، فمن المتوقع فقدان حوالي "+
+totalWaste.toFixed(1)+" لتر من المياه.";
+
+
+if(difference===0){
+
+document.getElementById("analysis").textContent=
+"النموذج لم يكتشف كمية إضافية مقارنة بالاستهلاك الطبيعي.";
+
+}
+else{
+
+document.getElementById("analysis").textContent=
+"اكتشف النموذج انحرافًا مقداره "+
+difference.toFixed(1)+
+" لتر/ساعة. ويمكن استخدام هذه المعلومة لتقدير أثر استمرار الهدر ومقارنة السيناريوهات المستقبلية.";
+
+}
+
+document.getElementById("result").style.display="block";
+}
+
+</script>
+
+</body>
+</html>
